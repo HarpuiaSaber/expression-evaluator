@@ -16,11 +16,32 @@ public class ExpressionParser {
   }
 
   public static Expression parse(String expression) {
-    return new ExpressionParser(expression).parse();
+    return new ExpressionParser(expression).parseOrExpression();
   }
 
-  private Expression parse() {
-    return parseOrExpression();
+  private Expression parseOrExpression() {
+    var result = parseAndExpression();
+    while (matchOrOperator()) {
+      result = new OrExpression(result, parseAndExpression());
+    }
+    return result;
+  }
+
+  private Expression parseAndExpression() {
+    var result = parseOperand();
+    while (matchAndOperator()) {
+      result = new AndExpression(result, parseOperand());
+    }
+    return result;
+  }
+
+  private Expression parseOperand() {
+    if (match(OPEN_PARENTHESIS)) {
+      var result = parseOrExpression();
+      expect(CLOSE_PARENTHESIS);
+      return result;
+    }
+    return new EqualExpression(parseNumber());
   }
 
   private boolean match(byte b) {
@@ -29,20 +50,6 @@ public class ExpressionParser {
       return true;
     }
     return false;
-  }
-
-  private void expect(byte b) {
-    if (!match(b)) {
-      throw new RuntimeException("Expected " + (char) b + " at position " + pos);
-    }
-  }
-
-  private Expression parseOrExpression() {
-    var result = parseAndExpression();
-    while (matchOrOperator()) {
-      result = new OrExpression(result, parseOperand());
-    }
-    return result;
   }
 
   private boolean matchOrOperator() {
@@ -54,25 +61,14 @@ public class ExpressionParser {
     return false;
   }
 
-  private Expression parseAndExpression() {
-    var result = parseOperand();
-    while (matchAndOperator()) {
-      result = new AndExpression(result, parseOperand());
-    }
-    return result;
-  }
-
   private boolean matchAndOperator() {
     return match(LOGICAL_AND_OPERATOR);
   }
 
-  private Expression parseOperand() {
-    if (match(OPEN_PARENTHESIS)) {
-      var result = parseOrExpression();
-      expect(CLOSE_PARENTHESIS);
-      return result;
+  private void expect(byte b) {
+    if (!match(b)) {
+      throw new RuntimeException("Expected " + (char) b + " at position " + pos);
     }
-    return new EqualExpression(parseNumber());
   }
 
   private int parseNumber() {

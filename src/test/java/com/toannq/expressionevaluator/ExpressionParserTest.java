@@ -6,112 +6,109 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ExpressionParserTest {
 
-  /**
-   * Tests for the {@link ExpressionParser#parse(String)} method.
-   * This method is expected to parse a given logical expression string into an {@link Expression} object.
-   */
-
   @Test
   void testParseSimpleNumber() {
-    // Arrange
-    String expression = "42";
-
-    // Act
-    Expression result = ExpressionParser.parse(expression);
-
-    // Assert
-    assertNotNull(result, "The result should not be null.");
-    assertTrue(result instanceof EqualExpression, "The result should be an instance of EqualExpression.");
-    assertEquals(42, ((EqualExpression) result).getValue(), "The value of the parsed expression should be 42.");
+    var expression = "42";
+    var result = ExpressionParser.parse(expression);
+    assertNotNull(result);
+    assertInstanceOf(EqualExpression.class, result);
+    assertEquals(42, ((EqualExpression) result).value());
   }
 
   @Test
   void testParseSimpleOrExpression() {
-    // Arrange
-    String expression = "1 || 2";
-
-    // Act
-    Expression result = ExpressionParser.parse(expression);
-
-    // Assert
-    assertNotNull(result, "The result should not be null.");
-    assertTrue(result instanceof OrExpression, "The result should be an instance of OrExpression.");
-    OrExpression orExpression = (OrExpression) result;
-
-    assertTrue(orExpression.getLeft() instanceof EqualExpression, "The left operand should be an EqualExpression.");
-    assertTrue(orExpression.getRight() instanceof EqualExpression, "The right operand should be an EqualExpression.");
-
-    assertEquals(1, ((EqualExpression) orExpression.getLeft()).getValue(), "Left operand should be 1.");
-    assertEquals(2, ((EqualExpression) orExpression.getRight()).getValue(), "Right operand should be 2.");
+    var expression = "1 || 2";
+    var result = ExpressionParser.parse(expression);
+    assertNotNull(result);
+    assertInstanceOf(OrExpression.class, result);
+    var orExpression = (OrExpression) result;
+    assertInstanceOf(EqualExpression.class, orExpression.left());
+    assertInstanceOf(EqualExpression.class, orExpression.right());
+    assertEquals(1, ((EqualExpression) orExpression.left()).value());
+    assertEquals(2, ((EqualExpression) orExpression.right()).value());
   }
 
   @Test
   void testParseSimpleAndExpression() {
-    // Arrange
-    String expression = "1 & 2";
-
-    // Act
-    Expression result = ExpressionParser.parse(expression);
-
-    // Assert
-    assertNotNull(result, "The result should not be null.");
-    assertTrue(result instanceof AndExpression, "The result should be an instance of OrExpression.");
-    AndExpression andExpression = (AndExpression) result;
-
-    assertTrue(andExpression.getLeft() instanceof EqualExpression, "The left operand should be an EqualExpression.");
-    assertTrue(andExpression.getRight() instanceof EqualExpression, "The right operand should be an EqualExpression.");
-
-    assertEquals(1, ((EqualExpression) andExpression.getLeft()).getValue(), "Left operand should be 1.");
-    assertEquals(2, ((EqualExpression) andExpression.getRight()).getValue(), "Right operand should be 2.");
+    var expression = "1 & 2";
+    var result = ExpressionParser.parse(expression);
+    assertNotNull(result);
+    assertInstanceOf(AndExpression.class, result);
+    var andExpression = (AndExpression) result;
+    assertInstanceOf(EqualExpression.class, andExpression.left());
+    assertInstanceOf(EqualExpression.class, andExpression.right());
+    assertEquals(1, ((EqualExpression) andExpression.left()).value());
+    assertEquals(2, ((EqualExpression) andExpression.right()).value());
   }
 
   @Test
-  void testParseExpressionWithParentheses() {
-    // Arrange
-    String expression = "1 || 2 & 3";
-
-    // Act
-    Expression result = ExpressionParser.parse(expression);
-
-    // Assert
-    assertNotNull(result, "The result should not be null.");
-    assertTrue(result instanceof OrExpression, "The result should be an instance of OrExpression.");
+  void testParseOrAndExpression() {
+    var expression = "1 || 2 & 3";
+    var result = ExpressionParser.parse(expression);
+    assertNotNull(result);
+    assertInstanceOf(OrExpression.class, result);
+    var orExpression = (OrExpression) result;
+    assertInstanceOf(EqualExpression.class, orExpression.left());
+    assertInstanceOf(AndExpression.class, orExpression.right());
+    assertEquals(1, ((EqualExpression) orExpression.left()).value());
+    var andExpression = (AndExpression) orExpression.right();
+    assertInstanceOf(EqualExpression.class, andExpression.left());
+    assertInstanceOf(EqualExpression.class, andExpression.right());
+    assertEquals(2, ((EqualExpression) andExpression.left()).value());
+    assertEquals(3, ((EqualExpression) andExpression.right()).value());
   }
 
   @Test
-  void testParseInvalidExpression() {
-    // Arrange
-    String expression = "(1 || 2";
-
-    // Act & Assert
-    RuntimeException exception = assertThrows(RuntimeException.class, () -> ExpressionParser.parse(expression),
-        "An exception should be thrown for an invalid expression.");
-    assertTrue(exception.getMessage().contains("Expected"),
-        "The exception message should indicate a missing parenthesis.");
-  }
-
-  @Test
-  void testParseEmptyExpression() {
-    // Arrange
-    String expression = "";
-
-    // Act & Assert
-    RuntimeException exception = assertThrows(RuntimeException.class, () -> ExpressionParser.parse(expression),
-        "An exception should be thrown for an empty expression.");
-    assertTrue(exception.getMessage().contains("Expected"),
-        "The exception message should indicate the invalid input.");
+  void testParseParenthesisOrAndExpression() {
+    var expression = "(1 || 2) & 3";
+    var result = ExpressionParser.parse(expression);
+    assertNotNull(result);
+    assertInstanceOf(AndExpression.class, result);
+    var andExpression = (AndExpression) result;
+    assertInstanceOf(OrExpression.class, andExpression.left());
+    assertInstanceOf(EqualExpression.class, andExpression.right());
+    assertEquals(3, ((EqualExpression) andExpression.right()).value());
+    var orExpression = (OrExpression) andExpression.left();
+    assertInstanceOf(EqualExpression.class, orExpression.left());
+    assertInstanceOf(EqualExpression.class, orExpression.right());
+    assertEquals(1, ((EqualExpression) orExpression.left()).value());
+    assertEquals(2, ((EqualExpression) orExpression.right()).value());
   }
 
   @Test
   void testParseComplexExpression() {
-    // Arrange
-    String expression = "(1 & 2) || (3 & (4 || 5))";
+    var expression = "(1 & 2) || (3 & (4 || 5))";
+    var result = ExpressionParser.parse(expression);
+    assertNotNull(result);
+    assertInstanceOf(OrExpression.class, result);
+    var orExpression = (OrExpression) result;
+    assertInstanceOf(AndExpression.class, orExpression.left());
+    assertInstanceOf(AndExpression.class, orExpression.right());
+    var leftAnd = (AndExpression) orExpression.left();
+    assertInstanceOf(EqualExpression.class, leftAnd.left());
+    assertInstanceOf(EqualExpression.class, leftAnd.right());
+    assertEquals(1, ((EqualExpression) leftAnd.left()).value());
+    assertEquals(2, ((EqualExpression) leftAnd.right()).value());
+    var rightAnd = (AndExpression) orExpression.right();
+    assertInstanceOf(EqualExpression.class, rightAnd.left());
+    assertInstanceOf(OrExpression.class, rightAnd.right());
+    assertEquals(3, ((EqualExpression) rightAnd.left()).value());
+    var nestedOr = (OrExpression) rightAnd.right();
+    assertInstanceOf(EqualExpression.class, nestedOr.left());
+    assertInstanceOf(EqualExpression.class, nestedOr.right());
+    assertEquals(4, ((EqualExpression) nestedOr.left()).value());
+    assertEquals(5, ((EqualExpression) nestedOr.right()).value());
+  }
 
-    // Act
-    Expression result = ExpressionParser.parse(expression);
+  @Test
+  void testParseInvalidExpression() {
+    var expression = "(1 || 2";
+    assertThrows(RuntimeException.class, () -> ExpressionParser.parse(expression));
+  }
 
-    // Assert
-    assertNotNull(result, "The result should not be null.");
-    assertTrue(result instanceof OrExpression, "The result should be an instance of OrExpression.");
+  @Test
+  void testParseEmptyExpression() {
+    var expression = "";
+    assertThrows(RuntimeException.class, () -> ExpressionParser.parse(expression));
   }
 }

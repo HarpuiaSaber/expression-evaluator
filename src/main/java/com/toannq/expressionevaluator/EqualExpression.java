@@ -1,25 +1,13 @@
 package com.toannq.expressionevaluator;
 
-import java.util.BitSet;
-
-public class EqualExpression extends AbstractExpression {
-  private final int value;
-
+public record EqualExpression(int value, int mask) implements Expression {
   public EqualExpression(int value) {
-    this.value = value;
-  }
-
-  public int getValue() {
-    return value;
+    this(value, 1 << value);
   }
 
   @Override
-  public EvaluatedResult evaluate(BitSet values) {
-    if (values.get(value)) {
-      var used = new BitSet(8);//increase by case quantity
-      used.set(value);
-      return new EvaluatedResult(true, used);
-    }
-    return new EvaluatedResult(false, EMPTY);
+  public EvaluatedResult evaluate(int inputMask) {
+    boolean matched = (inputMask & mask) != 0;
+    return matched ? new EvaluatedResult(true, mask) : new EvaluatedResult(false, 0);
   }
 }

@@ -1,34 +1,17 @@
 package com.toannq.expressionevaluator;
 
-import java.util.BitSet;
-
-public class OrExpression extends AbstractExpression {
-  private final Expression left;
-  private final Expression right;
-
-  public OrExpression(Expression left, Expression right) {
-    this.left = left;
-    this.right = right;
-  }
-
-  public Expression getLeft() {
-    return left;
-  }
-
-  public Expression getRight() {
-    return right;
-  }
+public record OrExpression(Expression left, Expression right) implements Expression {
 
   @Override
-  public EvaluatedResult evaluate(BitSet values) {
-    var leftResult = left.evaluate(values);
+  public EvaluatedResult evaluate(int inputMask) {
+    var leftResult = left.evaluate(inputMask);
     if (leftResult.matched()) {
       return leftResult;
     }
-    var rightResult = right.evaluate(values);
+    var rightResult = right.evaluate(inputMask);
     if (rightResult.matched()) {
       return rightResult;
     }
-    return new EvaluatedResult(false, EMPTY);
+    return new EvaluatedResult(false, 0);
   }
 }
