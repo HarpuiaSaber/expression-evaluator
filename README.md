@@ -1,6 +1,7 @@
 # Expression parser and evaluator
 
-> [!NOTE] This only supports my business logic.
+> [!NOTE]
+> This only supports my business logic.
 
 ## Business logic
 
