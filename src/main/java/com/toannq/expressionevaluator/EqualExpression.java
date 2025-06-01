@@ -6,8 +6,8 @@ public record EqualExpression(int value, int mask) implements Expression {
   }
 
   @Override
-  public EvaluatedResult evaluate(int inputMask) {
-    boolean matched = (inputMask & mask) != 0;
+  public EvaluatedResult evaluate(int caseMask) {
+    boolean matched = (caseMask & mask) != 0;
     return matched ? new EvaluatedResult(true, mask) : new EvaluatedResult(false, 0);
   }
 }
