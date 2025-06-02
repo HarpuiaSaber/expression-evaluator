@@ -46,6 +46,7 @@ And
 ```
 Input: "1 || 2 & 3"
 Output: Expression tree representing:
+
 Or
 ├── Equal(1)
 └── And
@@ -56,6 +57,7 @@ Or
 ```
 Input: "(1 || 2) & 3"
 Output: Expression tree representing:
+
 And
 ├── Or
 │   ├── Equal(1)
@@ -66,6 +68,7 @@ And
 ```
 Input: "(1 & 2) || (3 & (4 || 5))"
 Output: Expression tree representing:
+
 Or
 ├── And
 │   ├── Equal(1)
@@ -95,9 +98,17 @@ The result of `ExpressionParser.parse(...)` is an expression tree composed of di
 - `AndExpression`
 - `OrExpression`
 
-Each expression node implements an `evaluate(...)` method that takes a bitmask of occurred cases and returns a `boolean`
-result. Use `Expression.mask(...)` to generate this bitmask once and avoid duplicate masking.
-
+Each expression node implements an `evaluate(...)` method that takes a bitmask of occurred cases and returns a result of `boolean` and processed cases in expression string. Use `Expression.mask(...)` to generate this bitmask once and avoid duplicate masking.
+Follow this code to check for matching cases:
+```
+var case = List.of(1, 2); //get from your configurations
+var expression = ExpressionParser.parse("1 & 2");
+var caseMask = Expression.mask(case);
+var result = expression.evaluate(caseMask);
+if (result.matched() && (caseMask & result.usedBits() == result.usedBits()) {
+//matched
+}
+```
 ### Evaluation Logic:
 
 - `EqualExpression`: Returns `true` if the input bitmask contains the expected case.
