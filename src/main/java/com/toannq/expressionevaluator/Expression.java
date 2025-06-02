@@ -12,5 +12,10 @@ public interface Expression {
     return caseMask;
   }
 
+  static boolean isMatched(Expression expression, int caseMask) {
+    var result = expression.evaluate(caseMask);
+    return result.matched() && ((caseMask & result.usedMask()) == result.usedMask());
+  }
+
   EvaluatedResult evaluate(int caseMask);
 }

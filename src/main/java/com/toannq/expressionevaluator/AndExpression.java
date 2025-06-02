@@ -12,6 +12,6 @@ public record AndExpression(Expression left, Expression right) implements Expres
     if (!rightResult.matched()) {
       return new EvaluatedResult(false, 0);
     }
-    return new EvaluatedResult(true, (leftResult.usedBits() | rightResult.usedBits()));
+    return new EvaluatedResult(true, (leftResult.usedMask() | rightResult.usedMask()));
   }
 }

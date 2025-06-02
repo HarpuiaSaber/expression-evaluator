@@ -14,7 +14,7 @@ class ExpressionTest {
     var input = Expression.mask(List.of(1));
     var result = expression.evaluate(input);
     assertTrue(result.matched());
-    assertEquals((1 << 1), result.usedBits());
+    assertEquals((1 << 1), result.usedMask());
   }
 
   @Test
@@ -23,7 +23,7 @@ class ExpressionTest {
     var input = Expression.mask(List.of(2));
     var result = expression.evaluate(input);
     assertFalse(result.matched());
-    assertEquals(0, result.usedBits());
+    assertEquals(0, result.usedMask());
   }
 
   @Test
@@ -32,7 +32,7 @@ class ExpressionTest {
     var input = Expression.mask(List.of(1));
     var result = expression.evaluate(input);
     assertTrue(result.matched());
-    assertEquals((1 << 1), result.usedBits());
+    assertEquals((1 << 1), result.usedMask());
   }
 
   @Test
@@ -41,7 +41,7 @@ class ExpressionTest {
     var input = Expression.mask(List.of(3));
     var result = expression.evaluate(input);
     assertFalse(result.matched());
-    assertEquals(0, result.usedBits());
+    assertEquals(0, result.usedMask());
   }
 
   @Test
@@ -51,7 +51,7 @@ class ExpressionTest {
     var result = expression.evaluate(input);
     assertTrue(result.matched());
     var expectedUsed = (1 << 1) | (1 << 2);
-    assertEquals(expectedUsed, result.usedBits());
+    assertEquals(expectedUsed, result.usedMask());
   }
 
   @Test
@@ -60,7 +60,7 @@ class ExpressionTest {
     var input = Expression.mask(List.of(1));
     var result = expression.evaluate(input);
     assertFalse(result.matched());
-    assertEquals(0, result.usedBits());
+    assertEquals(0, result.usedMask());
   }
 
   @Test
@@ -69,11 +69,11 @@ class ExpressionTest {
     var input = Expression.mask(List.of(1));
     var result = expression.evaluate(input);
     assertTrue(result.matched());
-    assertEquals((1 << 1), result.usedBits());
+    assertEquals((1 << 1), result.usedMask());
     input = Expression.mask(List.of(1, 2));
     result = expression.evaluate(input);
     assertTrue(result.matched());
-    assertEquals((1 << 1), result.usedBits());
+    assertEquals((1 << 1), result.usedMask());
   }
 
   @Test
@@ -82,7 +82,7 @@ class ExpressionTest {
     var input = Expression.mask(List.of(3));
     var result = expression.evaluate(input);
     assertFalse(result.matched());
-    assertEquals(0, result.usedBits());
+    assertEquals(0, result.usedMask());
   }
 
   @Test
@@ -91,7 +91,7 @@ class ExpressionTest {
     var input = Expression.mask(List.of(1, 3));
     var result = expression.evaluate(input);
     assertTrue(result.matched());
-    assertEquals((1 << 1) | (1 << 3), result.usedBits());
+    assertEquals((1 << 1) | (1 << 3), result.usedMask());
   }
 
   @Test
@@ -100,7 +100,7 @@ class ExpressionTest {
     var input = Expression.mask(List.of(2));
     var result = expression.evaluate(input);
     assertFalse(result.matched());
-    assertEquals(0, result.usedBits());
+    assertEquals(0, result.usedMask());
   }
 
   @Test
@@ -109,7 +109,7 @@ class ExpressionTest {
     var input = Expression.mask(List.of(1, 2));
     var result = expression.evaluate(input);
     assertTrue(result.matched());
-    assertEquals((1 << 1) | (1 << 2), result.usedBits());
+    assertEquals((1 << 1) | (1 << 2), result.usedMask());
   }
 
   @Test
@@ -118,6 +118,6 @@ class ExpressionTest {
     var input = Expression.mask(List.of(4));
     var result = expression.evaluate(input);
     assertFalse(result.matched());
-    assertEquals(0, result.usedBits());
+    assertEquals(0, result.usedMask());
   }
 }
