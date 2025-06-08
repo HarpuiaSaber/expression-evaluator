@@ -28,7 +28,7 @@ class ExpressionTest {
 
   @Test
   void evaluate_simpleMatchingOrExpression_returnsMatchedResult() {
-    var expression = ExpressionParser.parse("1 || 2");
+    var expression = ExpressionParser.parse("1 | 2");
     var input = Expression.mask(List.of(1));
     var result = expression.evaluate(input);
     assertTrue(result.matched());
@@ -37,7 +37,7 @@ class ExpressionTest {
 
   @Test
   void evaluate_simpleNonMatchingOrExpression_returnsUnmatchedResult() {
-    var expression = ExpressionParser.parse("1 || 2");
+    var expression = ExpressionParser.parse("1 | 2");
     var input = Expression.mask(List.of(3));
     var result = expression.evaluate(input);
     assertFalse(result.matched());
@@ -65,7 +65,7 @@ class ExpressionTest {
 
   @Test
   void evaluate_operatorPrecedenceExpression_returnsMatchedResult() {
-    var expression = ExpressionParser.parse("1 || 2 & 3");
+    var expression = ExpressionParser.parse("1 | 2 & 3");
     var input = Expression.mask(List.of(1));
     var result = expression.evaluate(input);
     assertTrue(result.matched());
@@ -78,7 +78,7 @@ class ExpressionTest {
 
   @Test
   void evaluate_operatorPrecedenceExpression_returnsUnmatchedResult() {
-    var expression = ExpressionParser.parse("1 || 2 & 3");
+    var expression = ExpressionParser.parse("1 | 2 & 3");
     var input = Expression.mask(List.of(3));
     var result = expression.evaluate(input);
     assertFalse(result.matched());
@@ -87,7 +87,7 @@ class ExpressionTest {
 
   @Test
   void evaluate_complexExpression_returnsMatchedResult() {
-    var expression = ExpressionParser.parse("(1 || 2) & 3");
+    var expression = ExpressionParser.parse("(1 | 2) & 3");
     var input = Expression.mask(List.of(1, 3));
     var result = expression.evaluate(input);
     assertTrue(result.matched());
@@ -96,7 +96,7 @@ class ExpressionTest {
 
   @Test
   void evaluate_complexExpression_returnsUnmatchedResult() {
-    var expression = ExpressionParser.parse("(1 || 2) & 3");
+    var expression = ExpressionParser.parse("(1 | 2) & 3");
     var input = Expression.mask(List.of(2));
     var result = expression.evaluate(input);
     assertFalse(result.matched());
@@ -105,7 +105,7 @@ class ExpressionTest {
 
   @Test
   void evaluate_complexAndOrExpression_returnsMatchedResult() {
-    var expression = ExpressionParser.parse("(1 & 2) || 3");
+    var expression = ExpressionParser.parse("(1 & 2) | 3");
     var input = Expression.mask(List.of(1, 2));
     var result = expression.evaluate(input);
     assertTrue(result.matched());
@@ -114,7 +114,7 @@ class ExpressionTest {
 
   @Test
   void evaluate_complexAndOrExpression_returnsUnmatchedResult() {
-    var expression = ExpressionParser.parse("(1 & 2) || 3");
+    var expression = ExpressionParser.parse("(1 & 2) | 3");
     var input = Expression.mask(List.of(4));
     var result = expression.evaluate(input);
     assertFalse(result.matched());

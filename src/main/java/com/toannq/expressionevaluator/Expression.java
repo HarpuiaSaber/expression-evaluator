@@ -2,7 +2,7 @@ package com.toannq.expressionevaluator;
 
 import java.util.List;
 
-public interface Expression {
+public sealed interface Expression permits EqualExpression, AndExpression, OrExpression {
 
   static int mask(List<Integer> values) {
     int caseMask = 0;

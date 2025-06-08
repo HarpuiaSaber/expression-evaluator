@@ -17,7 +17,7 @@ class ExpressionParserTest {
 
   @Test
   void testParseSimpleOrExpression() {
-    var expression = "1 || 2";
+    var expression = "1 | 2";
     var result = ExpressionParser.parse(expression);
     assertNotNull(result);
     assertInstanceOf(OrExpression.class, result);
@@ -43,7 +43,7 @@ class ExpressionParserTest {
 
   @Test
   void testParseOrAndExpression() {
-    var expression = "1 || 2 & 3";
+    var expression = "1 | 2 & 3";
     var result = ExpressionParser.parse(expression);
     assertNotNull(result);
     assertInstanceOf(OrExpression.class, result);
@@ -60,7 +60,7 @@ class ExpressionParserTest {
 
   @Test
   void testParseParenthesisOrAndExpression() {
-    var expression = "(1 || 2) & 3";
+    var expression = "(1 | 2) & 3";
     var result = ExpressionParser.parse(expression);
     assertNotNull(result);
     assertInstanceOf(AndExpression.class, result);
@@ -77,7 +77,7 @@ class ExpressionParserTest {
 
   @Test
   void testParseComplexExpression() {
-    var expression = "(1 & 2) || (3 & (4 || 5))";
+    var expression = "(1 & 2) | (3 & (4 | 5))";
     var result = ExpressionParser.parse(expression);
     assertNotNull(result);
     assertInstanceOf(OrExpression.class, result);
@@ -101,14 +101,43 @@ class ExpressionParserTest {
   }
 
   @Test
-  void testParseInvalidExpression() {
-    var expression = "(1 || 2";
-    assertThrows(RuntimeException.class, () -> ExpressionParser.parse(expression));
+  void testParseInvalidExpression_misingClosingParenthesis() {
+    var expression = "((1 & 2) | (3 & (4 | 5))";
+    var exception = assertThrows(IllegalArgumentException.class, () -> ExpressionParser.parse(expression));
+    assertEquals("Mismatched close parentheses", exception.getMessage());
+  }
+
+  @Test
+  void testParseInvalidExpression_misingOpeningParenthesis() {
+    var expression = "(1 & 2) | (3 & (4 | 5)))";
+    var exception = assertThrows(IllegalArgumentException.class, () -> ExpressionParser.parse(expression));
+    assertEquals("Mismatched open parentheses", exception.getMessage());
+  }
+
+  @Test
+  void testParseInvalidExpression_notAllowedCharacters() {
+    var expression = "(1 | 2)a";
+    var exception = assertThrows(IllegalArgumentException.class, () -> ExpressionParser.parse(expression));
+    assertEquals("Unexpected character: a", exception.getMessage());
   }
 
   @Test
   void testParseEmptyExpression() {
     var expression = "";
-    assertThrows(RuntimeException.class, () -> ExpressionParser.parse(expression));
+    var exception = assertThrows(IllegalArgumentException.class, () -> ExpressionParser.parse(expression));
+    assertEquals("Expression cannot be null or empty", exception.getMessage());
+  }
+
+  @Test
+  void testParseNullExpression() {
+    var exception = assertThrows(IllegalArgumentException.class, () -> ExpressionParser.parse(null));
+    assertEquals("Expression cannot be null or empty", exception.getMessage());
+  }
+
+  @Test
+  void testParseBlankExpression() {
+    var expression = "    ";
+    var exception = assertThrows(IllegalArgumentException.class, () -> ExpressionParser.parse(expression));
+    assertEquals("Expression cannot be blank", exception.getMessage());
   }
 }

@@ -17,14 +17,14 @@ Expression ExpressionParser.parse(String expression)
 ```
 You can pass an expression string ranging from simple to complex:
 
-- Simple: `"1"`, `"1 & 2"`, `"1 || 2"`, etc
-  -Complex: `"1 || 2 & 3"`, `"(1 || 2) & 3"`, `"(1 & 2) || (3 & (4 || 5))"`, etc
+- Simple: `"1"`, `"1 & 2"`, `"1 | 2"`, etc
+  -Complex: `"1 | 2 & 3"`, `"(1 | 2) & 3"`, `"(1 & 2) | (3 & (4 | 5))"`, etc
 
 ### Operators and Syntax:
 
 - Numbers (`"1"`, `"2"`, etc.): Represent individual cases or conditions.
-- `"&"`: logical and operator (not bitwise and).
-- `"||"`: logical or operator.
+- `"&"`: logical and operator (not bitwise AND).
+- `"|"`: logical or operator (not bitwise OR).
 - `"("`, `")"`: opening and closing parentheses.
 
 Parse the expression and return an expression tree.
@@ -44,7 +44,7 @@ And
 └── Equal(2)
 ```
 ```
-Input: "1 || 2 & 3"
+Input: "1 | 2 & 3"
 Output: Expression tree representing:
 
 Or
@@ -55,7 +55,7 @@ Or
 
 ```
 ```
-Input: "(1 || 2) & 3"
+Input: "(1 | 2) & 3"
 Output: Expression tree representing:
 
 And
@@ -66,7 +66,7 @@ And
 
 ```
 ```
-Input: "(1 & 2) || (3 & (4 || 5))"
+Input: "(1 & 2) | (3 & (4 | 5))"
 Output: Expression tree representing:
 
 Or
@@ -82,10 +82,10 @@ Or
 ```
 
 > [!NOTE]
-> - Only the following elements are supported in the expression string: numbers, `&`, `||`, `(`, and `)`.
-> - The `&` symbol (bitwise AND) is used to represent logical AND in the expression syntax. However, during evaluation, it
-  operates with short-circuit logic similar to Java’s `&&`.
-> - The parser respects Java’s logical operator precedence: `&` has higher precedence than `||`.
+> - Only the following elements are supported in the expression string: numbers, `&`, `|`, `(`, and `)`.
+> - The `&` and '|' symbol (bitwise AND and OR) are used to represent logical AND and logical OR in the expression syntax. However, during evaluation, it
+  operates with short-circuit logic similar to Java’s `&&` and `||`.
+> - The parser respects Java’s logical operator precedence: `&` has higher precedence than `|`.
 > - The `ExpressionParser` class is not designed to be shared as a singleton or managed by a DI
   framework (like Spring). For thread safety, always use the static `ExpressionParser.parse(...)` method directly.
 
